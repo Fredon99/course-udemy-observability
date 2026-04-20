@@ -1,0 +1,46 @@
+services:
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    container_name: prometheus
+    networks:
+      - monitoring
+    volumes:
+      - prometheus_volume:/etc/prometheus
+    ports:
+      - "9090:9090"
+    command: 
+      - "--web.enable-remote-write-receiver" 
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  node-exporter:
+    image: prom/node-exporter:${NODE_EXPORTER_VERSION}
+    container_name: node-exporter
+    networks:
+      - monitoring
+    ports:
+      - "9100:9100"
+
+  shoehub:
+    build:
+      context: ./ShoeHubV2
+      dockerfile: Dockerfile
+    image: shoehub:2
+    container_name: shoehub
+    networks:
+      - monitoring
+    ports:
+      - "8080:8080"
+
+networks:
+  monitoring:
+    name: monitoring
+    external: false
+
+volumes:
+  prometheus_volume:
+    driver: local
+    name: prometheus_volume_02_application
+    driver_opts:
+      type: none
+      o: bind
+      device: ./prometheus_volume_bind

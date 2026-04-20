@@ -1,0 +1,101 @@
+services:
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    container_name: prometheus
+    networks:
+      - monitoring
+    volumes:
+      - prometheus_volume:/etc/prometheus
+    ports:
+      - "9090:9090"
+    command: 
+      - "--web.enable-remote-write-receiver" 
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/-/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  order-service:
+    build:
+      context: ./OrderService
+      dockerfile: Dockerfile
+    image: order-service:1.0
+    container_name: order-service
+    networks:
+      - monitoring
+    ports:
+      - "8080:8080"
+    depends_on:
+      - alloy
+
+  alloy:
+    image: grafana/alloy:v1.14.2
+    container_name: alloy
+    networks:
+      - monitoring
+    ports:
+      - "8081:8081"
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - alloy_volume:/etc/alloy
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:8081
+      - /etc/alloy/config.alloy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 3 
+    
+  grafana:
+    image: grafana/grafana-oss:${GRAFANA_VERSION}
+    container_name: grafana
+    networks:
+      - monitoring
+    ports:
+      - 3000:3000
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP}
+    volumes:
+      - grafana_volume:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  monitoring:
+    name: monitoring
+    external: false
+
+volumes:
+  prometheus_volume:
+    driver: local
+    name: prometheus_volume_alloy_01
+    driver_opts:
+      type: none
+      o: bind
+      device: ./prometheus_volume
+
+  alloy_volume:
+    driver: local
+    name: alloy_volume_alloy_01
+    driver_opts:
+      type: none
+      o: bind
+      device: ./alloy_volume
+
+  grafana_volume:
+    driver: local
+    name: grafana_volume_alloy_01

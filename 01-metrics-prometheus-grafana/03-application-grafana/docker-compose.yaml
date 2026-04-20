@@ -1,0 +1,67 @@
+services:
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    container_name: prometheus
+    networks:
+      - monitoring
+    volumes:
+      - prometheus_volume:/etc/prometheus
+    ports:
+      - "9090:9090"
+    command: 
+      - "--web.enable-remote-write-receiver" 
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  node-exporter:
+    image: prom/node-exporter:${NODE_EXPORTER_VERSION}
+    container_name: node-exporter
+    networks:
+      - monitoring
+    ports:
+      - "9100:9100"
+
+  shoehub:
+    build:
+      context: ./ShoeHubV2
+      dockerfile: Dockerfile
+    image: shoehub:2
+    container_name: shoehub
+    networks:
+      - monitoring
+    ports:
+      - "8080:8080"
+
+  grafana:
+    image: grafana/grafana-oss:${GRAFANA_VERSION}
+    container_name: grafana
+    networks:
+      - monitoring
+    ports:
+      - 3000:3000
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_SECURITY_ADMIN_USER: ${GF_SECURITY_ADMIN_USER}
+      GF_USERS_ALLOW_SIGN_UP: ${GF_USERS_ALLOW_SIGN_UP}
+    volumes:
+      - grafana_volume:/var/lib/grafana
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+    depends_on:
+      - prometheus
+
+networks:
+  monitoring:
+    name: monitoring
+    external: false
+
+volumes:
+  prometheus_volume:
+    driver: local
+    name: prometheus_volume_03_application
+    driver_opts:
+      type: none
+      o: bind
+      device: ./prometheus_volume_bind
+  grafana_volume:
+    driver: local
+    name: grafana_volume_03_application

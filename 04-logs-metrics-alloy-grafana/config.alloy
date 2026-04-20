@@ -1,0 +1,61 @@
+// This config file is designed to send traces and metrics to the docker
+// compose environment from example/docker-compose.
+
+logging {
+	level  = "debug"
+	format = "logfmt"
+}
+
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    logs    = [otelcol.processor.batch.default.input]
+    metrics = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+    logs    = [otelcol.exporter.loki.default.input]
+    traces  = [otelcol.exporter.loki.default.input]
+  }
+}
+
+// Exporta métricas para Prometheus
+otelcol.exporter.prometheus "default" {
+  forward_to = [prometheus.remote_write.default.receiver]
+}
+
+prometheus.remote_write "default" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+
+// Escreve logs e traces no Loki
+loki.write "local" {
+    endpoint {
+        url = "http://loki:3100/loki/api/v1/push"
+    }
+}
+
+// Coleta logs de arquivos locais (opcional)
+loki.source.file "log" {
+  targets    = [
+    {__path__ = "/var/log/test.log", "app" = "order-service", "job" = "backend"},
+  ]
+  forward_to = [loki.write.local.receiver]
+}
+
+// Exporta logs e traces para Loki
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.local.receiver]
+}
