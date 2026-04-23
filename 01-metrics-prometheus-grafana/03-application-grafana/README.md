@@ -55,11 +55,11 @@ docker compose down -v
 
 O Grafana vem **pré-configurado** com:
 
-✅ **Data Source Prometheus**: Conectado automaticamente via provisioning
+**Data Source Prometheus**: Conectado automaticamente via provisioning
 - URL: `http://prometheus:9090`
 - Tipo: Prometheus
 
-✅ **Dashboard ShoeHub**: Carregado automaticamente
+**Dashboard ShoeHub**: Carregado automaticamente
 - Contém gráficos de vendas, taxa de vendas e estatísticas por marca
 - Localizado em: `./grafana/provisioning/dashboards/shoehub-dashboard.json`
 

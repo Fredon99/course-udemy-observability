@@ -2,7 +2,7 @@
 
 ---
 
-# 🧠 Visão Geral
+# Visão Geral
 
 Hoje existem **duas gerações de observabilidade** convivendo:
 
@@ -15,9 +15,9 @@ O ponto principal:
 
 ---
 
-# 📦 Componentes Fundamentais
+# Componentes Fundamentais
 
-## 🔹 OpenTelemetry (OTEL)
+## OpenTelemetry (OTEL)
 
 **OpenTelemetry** é um **padrão aberto** para gerar telemetria.
 
@@ -38,9 +38,9 @@ Traces
 
 ---
 
-## 🔹 Exporters
+## Exporters
 
-⚠️ **Exporter NÃO é uma ferramenta separada.**
+**Exporter NÃO é uma ferramenta separada.**
 
 Exporter = **mecanismo de envio de dados**.
 
@@ -61,7 +61,7 @@ Datadog Exporter
 
 ---
 
-## 🔹 Collector (O coração da arquitetura moderna)
+## Collector (O coração da arquitetura moderna)
 
 O Collector recebe, processa e encaminha telemetria.
 
@@ -81,7 +81,7 @@ Funções:
 
 ---
 
-# 🚀 O que é Grafana Alloy?
+# O que é Grafana Alloy?
 
 **Grafana Alloy** é um agente unificado criado pela Grafana Labs.
 
@@ -94,11 +94,11 @@ OpenTelemetry Collector
 + pipeline unificado de observabilidade
 ```
 
-👉 Alloy **é um Collector**, não um exporter.
+Alloy **é um Collector**, não um exporter.
 
 ---
 
-# 🏗️ Stack Prometheus Clássica
+# Stack Prometheus Clássica
 
 Modelo histórico.
 
@@ -118,12 +118,12 @@ Application
 
 ## Características
 
-✅ Pull model
-✅ Simples
-✅ Muito estável
-❌ Métricas apenas
-❌ Logs e traces separados
-❌ Forte acoplamento
+- Pull model
+- Simples
+- Muito estável
+- Apenas métricas
+- Logs e traces separados
+- Forte acoplamento
 
 ---
 
@@ -143,7 +143,7 @@ app exporter
 
 ---
 
-# 🌎 Stack Moderna OpenTelemetry + Alloy
+# Stack Moderna OpenTelemetry + Alloy
 
 A arquitetura mudou completamente.
 
@@ -184,7 +184,7 @@ Application
 
 ---
 
-# 🔥 Mudança Conceitual Mais Importante
+# Mudança Conceitual Mais Importante
 
 Antes:
 
@@ -202,9 +202,9 @@ O **Collector virou o centro da arquitetura**.
 
 ---
 
-# 🧩 Modelos de Coleta
+# Modelos de Coleta
 
-## 1️⃣ Pull Model (Prometheus)
+## 1. Pull Model (Prometheus)
 
 ```
 Prometheus → scrape → Application
@@ -218,7 +218,7 @@ Características:
 
 ---
 
-## 2️⃣ Push Model (OpenTelemetry)
+## 2. Push Model (OpenTelemetry)
 
 ```
 Application → OTLP → Collector
@@ -233,7 +233,7 @@ Características:
 
 ---
 
-# ⭐ Insight Profissional
+# Insight Profissional
 
 OpenTelemetry desacopla:
 
@@ -252,7 +252,7 @@ Você instrumenta **uma vez** e decide depois:
 
 ---
 
-# 🚀 O que o Alloy pode substituir
+# O que o Alloy pode substituir
 
 Alloy pode substituir:
 
@@ -263,7 +263,7 @@ Alloy pode substituir:
 
 ---
 
-# 🏢 Arquitetura usada por empresas modernas
+# Arquitetura usada por empresas modernas
 
 ```
 Apps → OpenTelemetry → Collector → Observability Backend
@@ -278,7 +278,7 @@ Esse é exatamente o modelo usado por:
 
 ---
 
-# 🎯 Regra Mental Definitiva
+# Regra Mental Definitiva
 
 ```
 Application generates telemetry
@@ -289,27 +289,27 @@ Grafana visualizes telemetry
 
 ---
 
-# 🧠 Frase nível Senior DevOps
+# Frase nível Senior DevOps
 
 > OpenTelemetry standardizes telemetry generation while collectors such as Alloy decouple instrumentation from observability backends like Prometheus, Loki, Tempo or Datadog.
 
 ---
 
-# 📊 Comparação Final
+# Comparação Final
 
 | Aspecto        | Prometheus Clássico | OpenTelemetry Moderno |
 | -------------- | ------------------- | --------------------- |
 | Coleta         | Pull                | Push                  |
-| Métricas       | ✅                   | ✅                     |
-| Logs           | ❌                   | ✅                     |
-| Traces         | ❌                   | ✅                     |
+| Métricas       | Sim                 | Sim                   |
+| Logs           | Não                 | Sim                   |
+| Traces         | Não                 | Sim                   |
 | Escalabilidade | Média               | Alta                  |
 | Cloud Native   | Parcial             | Total                 |
 | Vendor lock    | Médio               | Baixo                 |
 
 ---
 
-# ✅ Resumo Final
+# Resumo Final
 
 ```
 Prometheus = Metrics backend + scraper
